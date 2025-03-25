@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
 import { MobileNav } from "./MobileNav";
+import { Footer } from "./Footer";
 import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
@@ -23,8 +24,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar for desktop */}
+    <div className="flex min-h-screen bg-background flex-col">
+      {/* Sidebar for mobile only */}
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       {/* Main content */}
@@ -39,6 +40,9 @@ export function MainLayout({ children }: MainLayoutProps) {
             {children}
           </div>
         </main>
+        
+        {/* Footer */}
+        <Footer />
         
         {/* Mobile bottom navigation */}
         <MobileNav />

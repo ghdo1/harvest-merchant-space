@@ -1,5 +1,5 @@
 
-import { Home, ShoppingBag, LayoutGrid, Tag, User, Heart, ShoppingCart, Clock, Menu, X } from "lucide-react";
+import { Home, ShoppingBag, LayoutGrid, Tag, User, Heart, ShoppingCart, Clock, Menu, X, BookOpenText, Truck } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +20,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     { name: "Toko", path: "/shop", icon: ShoppingBag },
     { name: "Kategori", path: "/categories", icon: LayoutGrid },
     { name: "Promo", path: "/promo", icon: Tag },
+    { name: "Layanan", path: "/services", icon: Truck },
+    { name: "Blog", path: "/blog", icon: BookOpenText },
+    { name: "Lacak Pengiriman", path: "/tracking", icon: Truck },
   ];
   
   const accountItems = [
@@ -41,9 +44,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="flex items-center justify-between h-16 px-6 border-b border-sidebar-border">
           <Link to="/" className="flex items-center space-x-2" onClick={onClose}>
             <div className="w-8 h-8 rounded-full bg-nature-500 center">
-              <span className="text-white font-semibold text-sm">AC</span>
+              <span className="text-white font-semibold text-sm">SAM</span>
             </div>
-            <span className="font-semibold text-lg">AgroCom</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-lg">SAM</span>
+              <span className="text-xs text-muted-foreground -mt-1">Siagian Agro Mandiri</span>
+            </div>
           </Link>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-sidebar-accent transition-colors">
             <X size={20} />
@@ -106,69 +112,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
       </div>
       
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-sidebar border-r border-sidebar-border">
-        <div className="flex items-center h-16 px-6 border-b border-sidebar-border">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-nature-500 center">
-              <span className="text-white font-semibold text-sm">AC</span>
-            </div>
-            <span className="font-semibold text-lg">AgroCom</span>
-          </Link>
-        </div>
-        
-        <div className="flex-1 py-6 px-4 space-y-8 overflow-y-auto subtle-scroll">
-          <nav className="space-y-1.5">
-            <h3 className="text-xs font-medium text-muted-foreground px-2 mb-2">MENU</h3>
-            {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-colors",
-                  isActive(item.path) 
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium" 
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <item.icon size={18} />
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </nav>
-          
-          <nav className="space-y-1.5">
-            <h3 className="text-xs font-medium text-muted-foreground px-2 mb-2">AKUN</h3>
-            {accountItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-colors",
-                  isActive(item.path) 
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium" 
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <item.icon size={18} />
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </nav>
-          
-          <div className="px-4 py-6">
-            <div className="glass-card p-4 space-y-3">
-              <p className="text-sm text-center">Belum memiliki akun?</p>
-              <Link
-                to="/login"
-                className="block w-full px-4 py-2 bg-nature-500 hover:bg-nature-600 text-white font-medium rounded-md text-center transition-colors"
-              >
-                Masuk / Daftar
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Hiding the desktop sidebar as requested */}
     </>
   );
 }

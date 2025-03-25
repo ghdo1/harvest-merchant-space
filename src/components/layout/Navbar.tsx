@@ -1,9 +1,17 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Menu, Search, ShoppingCart, User } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, Search, ShoppingCart, User, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 interface NavbarProps {
   scrolled: boolean;
@@ -13,6 +21,11 @@ interface NavbarProps {
 export function Navbar({ scrolled, onMenuClick }: NavbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const isMobile = useIsMobile();
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
   
   return (
     <header 
@@ -35,27 +48,147 @@ export function Navbar({ scrolled, onMenuClick }: NavbarProps) {
           
           <Link to="/" className="hidden md:flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-nature-500 center">
-              <span className="text-white font-semibold text-sm">AC</span>
+              <span className="text-white font-semibold text-sm">SAM</span>
             </div>
-            <span className="font-semibold text-lg">AgroCom</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-lg">SAM</span>
+              <span className="text-xs text-muted-foreground -mt-1">Siagian Agro Mandiri</span>
+            </div>
           </Link>
           
           {!isMobile && (
-            <nav className="hidden md:flex items-center gap-1 ml-6">
-              <Link to="/" className="link-item active">Beranda</Link>
-              <Link to="/shop" className="link-item">Toko</Link>
-              <Link to="/categories" className="link-item">Kategori</Link>
-              <Link to="/about" className="link-item">Tentang Kami</Link>
-            </nav>
+            <NavigationMenu className="hidden md:flex ml-6">
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <Link 
+                    to="/" 
+                    className={cn(
+                      "link-item",
+                      isActive("/") && "active"
+                    )}
+                  >
+                    Beranda
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link 
+                    to="/shop" 
+                    className={cn(
+                      "link-item",
+                      isActive("/shop") && "active"
+                    )}
+                  >
+                    Toko
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className={isActive("/categories") ? "text-primary font-medium" : ""}>Kategori</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[220px] gap-2 p-4">
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/categories/pupuk"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Pupuk</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                              Pupuk organik dan anorganik berkualitas
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/categories/pestisida"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Pestisida</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                              Pestisida yang aman dan efektif
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/categories/benih"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Benih dan Bibit</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                              Benih dan bibit unggul berbagai tanaman
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/categories/alat"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Alat Pertanian</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                              Alat-alat pertanian modern dan tradisional
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link 
+                    to="/services" 
+                    className={cn(
+                      "link-item",
+                      isActive("/services") && "active"
+                    )}
+                  >
+                    Layanan
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link 
+                    to="/blog" 
+                    className={cn(
+                      "link-item",
+                      isActive("/blog") && "active"
+                    )}
+                  >
+                    Blog
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link 
+                    to="/tracking" 
+                    className={cn(
+                      "link-item",
+                      isActive("/tracking") && "active"
+                    )}
+                  >
+                    Lacak Pengiriman
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           )}
         </div>
         
         {/* Center logo for mobile */}
         <Link to="/" className="md:hidden flex items-center gap-2">
           <div className="w-7 h-7 rounded-full bg-nature-500 center">
-            <span className="text-white font-semibold text-xs">AC</span>
+            <span className="text-white font-semibold text-xs">SAM</span>
           </div>
-          <span className="font-semibold">AgroCom</span>
+          <span className="font-semibold">SAM</span>
         </Link>
         
         {/* Right section */}
@@ -63,13 +196,23 @@ export function Navbar({ scrolled, onMenuClick }: NavbarProps) {
           <button 
             onClick={() => setSearchOpen(!searchOpen)}
             className="p-2 rounded-md hover:bg-secondary transition-colors"
+            aria-label="Cari"
           >
             <Search size={20} />
           </button>
           
           <Link 
+            to="/wishlist" 
+            className="p-2 rounded-md hover:bg-secondary transition-colors hidden md:flex"
+            aria-label="Wishlist"
+          >
+            <Heart size={20} />
+          </Link>
+          
+          <Link 
             to="/cart" 
             className="p-2 rounded-md hover:bg-secondary transition-colors relative"
+            aria-label="Keranjang Belanja"
           >
             <ShoppingCart size={20} />
             <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-nature-500 text-white text-[10px] rounded-full center">
@@ -78,8 +221,9 @@ export function Navbar({ scrolled, onMenuClick }: NavbarProps) {
           </Link>
           
           <Link 
-            to="/login" 
+            to="/profile" 
             className="p-2 rounded-md hover:bg-secondary transition-colors hidden md:flex"
+            aria-label="Profil"
           >
             <User size={20} />
           </Link>

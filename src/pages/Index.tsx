@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronRight, Leaf, TrendingUp, Truck } from "lucide-react";
+import { ArrowRight, ChevronRight, Leaf, TrendingUp, Truck, Star, Award, Phone } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { HeroSection } from "@/components/ui/HeroSection";
 import { ProductCard } from "@/components/ui/ProductCard";
@@ -21,28 +21,28 @@ const featuredProduct = {
 
 const categories = [
   {
-    id: "cat-1",
-    name: "Bibit & Benih",
-    image: "https://images.unsplash.com/photo-1585579490173-cdd36dca9866?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHNlZWRzfGVufDB8fDB8fHww",
-    productCount: 245
-  },
-  {
-    id: "cat-2",
-    name: "Pupuk & Nutrisi",
+    id: "pupuk",
+    name: "Pupuk",
     image: "https://images.unsplash.com/photo-1592722132197-5a5a244425a5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGZlcnRpbGl6ZXJ8ZW58MHx8MHx8fDA%3D",
     productCount: 182
   },
   {
-    id: "cat-3",
+    id: "pestisida",
+    name: "Pestisida",
+    image: "https://images.unsplash.com/photo-1599454400963-b90b1cc4a364?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBlc3RpY2lkZXxlbnwwfHwwfHx8MA%3D%3D",
+    productCount: 78
+  },
+  {
+    id: "benih",
+    name: "Benih dan Bibit",
+    image: "https://images.unsplash.com/photo-1585579490173-cdd36dca9866?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHNlZWRzfGVufDB8fDB8fHww",
+    productCount: 245
+  },
+  {
+    id: "alat",
     name: "Alat Pertanian",
     image: "https://images.unsplash.com/photo-1593025351836-65bb75e86c71?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGZhcm0lMjB0b29sc3xlbnwwfHwwfHx8MA%3D%3D",
     productCount: 124
-  },
-  {
-    id: "cat-4",
-    name: "Pestisida Organik",
-    image: "https://images.unsplash.com/photo-1599454400963-b90b1cc4a364?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBlc3RpY2lkZXxlbnwwfHwwfHx8MA%3D%3D",
-    productCount: 78
   }
 ];
 
@@ -79,6 +79,25 @@ const popularProducts = [
   }
 ];
 
+// Farming tips for interactive section
+const farmingTips = [
+  {
+    title: "Cara Mengetahui Kebutuhan Pupuk yang Tepat",
+    content: "Analisis tanah adalah langkah penting untuk mengetahui kebutuhan pupuk yang tepat. Anda dapat melakukan analisis tanah sederhana atau mengirim sampel ke laboratorium untuk hasil yang lebih akurat. Hasil analisis akan menunjukkan nutrisi apa yang sudah ada dan apa yang perlu ditambahkan.",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGZhcm1pbmd8ZW58MHx8MHx8fDA%3D"
+  },
+  {
+    title: "Teknik Menanam Benih yang Benar",
+    content: "Kedalaman tanam yang tepat sangat penting untuk keberhasilan perkecambahan. Aturan umumnya adalah menanam benih sedalam 2-3 kali ukuran benih tersebut. Jaga kelembaban tanah tetapi hindari terlalu basah yang dapat menyebabkan pembusukan.",
+    image: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBsYW50aW5nfGVufDB8fDB8fHww"
+  },
+  {
+    title: "Pengendalian Hama Secara Alami",
+    content: "Penggunaan predator alami seperti ladybug untuk mengendalikan aphid, menanam tanaman pendamping yang mengusir hama, dan rotasi tanaman dapat membantu mengendalikan hama tanpa menggunakan bahan kimia berbahaya.",
+    image: "https://images.unsplash.com/photo-1538968195982-815fb1bc231d?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cGVzdCUyMGNvbnRyb2x8ZW58MHx8MHx8fDA%3D"
+  }
+];
+
 const Index = () => {
   useEffect(() => {
     // Scroll to top when the component mounts
@@ -87,11 +106,11 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-12 pb-16">
+      <div className="max-w-7xl mx-auto space-y-16 pb-20">
         {/* Hero Section */}
         <section>
           <HeroSection
-            title="Produk Pertanian Berkualitas untuk Hasil Panen Terbaik"
+            title="Sukses Bertani Dimulai Dari Sini"
             subtitle="Temukan beragam produk pertanian terbaik dengan kualitas premium yang akan membantu meningkatkan hasil panen Anda."
             image="https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZmFybWVyfGVufDB8fDB8fHww"
             ctaText="Belanja Sekarang"
@@ -101,7 +120,7 @@ const Index = () => {
         
         {/* Category Section */}
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 px-4">
             <h2 className="text-2xl font-semibold">Kategori Produk</h2>
             <Link to="/categories" className="text-nature-600 hover:text-nature-700 flex items-center gap-1 font-medium">
               <span>Lihat Semua</span>
@@ -109,7 +128,7 @@ const Index = () => {
             </Link>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4">
             {categories.map((category) => (
               <CategoryCard
                 key={category.id}
@@ -122,8 +141,44 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Interactive Tips Section */}
+        <section className="px-4">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold">Tips Bertani</h2>
+            <Link to="/blog" className="text-nature-600 hover:text-nature-700 flex items-center gap-1 font-medium">
+              <span>Lihat Semua Tips</span>
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {farmingTips.map((tip, index) => (
+              <div key={index} className="glass-card overflow-hidden group hover:shadow-accent transition-all duration-300">
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={tip.image} 
+                    alt={tip.title}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-semibold mb-2">{tip.title}</h3>
+                  <p className="text-muted-foreground text-sm line-clamp-3">{tip.content}</p>
+                  <Link
+                    to="/blog"
+                    className="mt-4 inline-flex items-center text-nature-600 hover:text-nature-700 font-medium"
+                  >
+                    <span>Baca Selengkapnya</span>
+                    <ChevronRight size={16} className="ml-1" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        
         {/* Featured Product */}
-        <section>
+        <section className="px-4">
           <FeaturedProduct
             id={featuredProduct.id}
             name={featuredProduct.name}
@@ -136,11 +191,11 @@ const Index = () => {
         </section>
         
         {/* Why Choose Us */}
-        <section className="py-8">
-          <h2 className="text-2xl font-semibold text-center mb-8">Mengapa Memilih AgroCom</h2>
+        <section className="py-8 px-4">
+          <h2 className="text-2xl font-semibold text-center mb-8">Mengapa Memilih SAM</h2>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="glass-card p-6 text-center">
+            <div className="glass-card p-6 text-center hover:shadow-accent transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-nature-100 dark:bg-nature-900/30 rounded-xl center mx-auto mb-4">
                 <Leaf size={24} className="text-nature-600" />
               </div>
@@ -148,7 +203,7 @@ const Index = () => {
               <p className="text-muted-foreground">Kami hanya menyediakan produk pertanian terbaik yang telah teruji kualitasnya.</p>
             </div>
             
-            <div className="glass-card p-6 text-center">
+            <div className="glass-card p-6 text-center hover:shadow-accent transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-nature-100 dark:bg-nature-900/30 rounded-xl center mx-auto mb-4">
                 <Truck size={24} className="text-nature-600" />
               </div>
@@ -156,7 +211,7 @@ const Index = () => {
               <p className="text-muted-foreground">Produk dikirim langsung ke lokasi Anda dengan cepat dan aman.</p>
             </div>
             
-            <div className="glass-card p-6 text-center">
+            <div className="glass-card p-6 text-center hover:shadow-accent transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-nature-100 dark:bg-nature-900/30 rounded-xl center mx-auto mb-4">
                 <TrendingUp size={24} className="text-nature-600" />
               </div>
@@ -167,7 +222,7 @@ const Index = () => {
         </section>
         
         {/* Popular Products */}
-        <section>
+        <section className="px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold">Produk Populer</h2>
             <Link to="/shop" className="text-nature-600 hover:text-nature-700 flex items-center gap-1 font-medium">
@@ -192,8 +247,81 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Testimonials Section */}
+        <section className="px-4">
+          <h2 className="text-2xl font-semibold text-center mb-8">Apa Kata Pelanggan Kami</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="glass-card p-6 relative">
+              <div className="absolute top-6 right-6 text-amber-400">
+                <Star size={20} fill="currentColor" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+              </div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-muted overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D" alt="Customer" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Budi Santoso</h3>
+                  <p className="text-sm text-muted-foreground">Petani, Medan</p>
+                </div>
+              </div>
+              <p className="text-muted-foreground">
+                "Pupuk dari SAM memberikan hasil yang luar biasa untuk kebun saya. Tanaman tumbuh lebih subur dan hasil panen meningkat signifikan."
+              </p>
+            </div>
+            
+            <div className="glass-card p-6 relative">
+              <div className="absolute top-6 right-6 text-amber-400">
+                <Star size={20} fill="currentColor" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+              </div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-muted overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8d29tYW4lMjBpbmRvbmVzaWF8ZW58MHx8MHx8fDA%3D" alt="Customer" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Siti Rahmawati</h3>
+                  <p className="text-sm text-muted-foreground">Pemilik Kebun, Pekanbaru</p>
+                </div>
+              </div>
+              <p className="text-muted-foreground">
+                "Pelayanan SAM sangat profesional, pengiriman cepat dan produk selalu dalam kondisi baik. Saya sangat puas dan akan terus berlangganan."
+              </p>
+            </div>
+            
+            <div className="glass-card p-6 relative">
+              <div className="absolute top-6 right-6 text-amber-400">
+                <Star size={20} fill="currentColor" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+                <Star size={20} fill="currentColor" className="inline-block ml-1" />
+              </div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-muted overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWFufGVufDB8fDB8fHww" alt="Customer" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Eko Prasetyo</h3>
+                  <p className="text-sm text-muted-foreground">Distributor, Palembang</p>
+                </div>
+              </div>
+              <p className="text-muted-foreground">
+                "Sebagai distributor, saya sangat menghargai konsistensi kualitas dari produk SAM. Pelanggan saya selalu puas dengan hasil yang mereka dapatkan."
+              </p>
+            </div>
+          </div>
+        </section>
+        
         {/* CTA Banner */}
-        <section>
+        <section className="px-4">
           <div className="relative rounded-xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-nature-600/90 to-nature-800/90" />
             <img 
@@ -214,6 +342,82 @@ const Index = () => {
                 <span>Daftar Sekarang</span>
                 <ChevronRight size={16} />
               </Link>
+            </div>
+          </div>
+        </section>
+        
+        {/* Contact Section */}
+        <section className="px-4">
+          <div className="glass-card p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h2 className="text-2xl font-semibold mb-3">Hubungi Kami</h2>
+                <p className="text-muted-foreground mb-6">
+                  Punya pertanyaan tentang produk kami atau butuh saran pertanian? Jangan ragu untuk menghubungi tim kami.
+                </p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-nature-100 center text-nature-600">
+                      <Award size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">Siagian Agro Mandiri</h3>
+                      <p className="text-sm text-muted-foreground">Sukses Bertani Dimulai Dari Sini</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-nature-100 center text-nature-600">
+                      <Phone size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">Hubungi Kami</h3>
+                      <a 
+                        href="tel:+6281234567890" 
+                        className="text-sm text-nature-600 hover:text-nature-700 transition-colors"
+                      >
+                        +62 812 3456 7890
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Nama</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                      placeholder="Nama Anda"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <input 
+                      type="email" 
+                      className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                      placeholder="email@anda.com"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Pesan</label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                    placeholder="Apa yang ingin Anda sampaikan..."
+                  ></textarea>
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full sm:w-auto px-6 py-2 bg-nature-600 text-white rounded-md hover:bg-nature-700 transition-colors"
+                >
+                  Kirim Pesan
+                </button>
+              </form>
             </div>
           </div>
         </section>

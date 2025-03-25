@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, LayoutGrid, Tag, User } from "lucide-react";
+import { Home, ShoppingBag, LayoutGrid, Tag, User, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -19,7 +19,8 @@ export function MobileNav() {
     { name: "Toko", path: "/shop", icon: ShoppingBag },
     { name: "Kategori", path: "/categories", icon: LayoutGrid },
     { name: "Promo", path: "/promo", icon: Tag },
-    { name: "Akun", path: "/login", icon: User }
+    { name: "Wishlist", path: "/wishlist", icon: Heart },
+    { name: "Akun", path: "/profile", icon: User }
   ];
   
   return (
