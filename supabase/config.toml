@@ -1,1 +1,23 @@
+
 project_id = "dtlyeqgrposovpofoldd"
+
+[api]
+# Port to use for the API URL.
+port = 54321
+# Enable the Swagger UI at /rest/v1.
+enabled_apis = ["rest", "storage", "graphql"]
+
+[db]
+# Port to use for the local database URL.
+port = 54322
+
+[studio]
+# Port to use for Supabase Studio.
+port = 54323
+
+# Email testing
+[auth]
+enable_signup = true
+
+[functions.seed-initial-data]
+verify_jwt = false

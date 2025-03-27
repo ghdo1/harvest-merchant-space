@@ -1,20 +1,61 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { User, Package, Heart, LogOut, Settings, Clock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    if (user) {
+      fetchUserProfile();
+    } else {
+      setIsLoading(false);
+    }
+  }, [user]);
 
-  // Sample user data (in a real app, this would come from authentication)
-  const userData = {
-    name: "Agus Supriadi",
-    email: "agus.supriadi@example.com",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D",
-    isLoggedIn: true,
+  const fetchUserProfile = async () => {
+    try {
+      setIsLoading(true);
+      
+      const { data: pelanggan, error } = await supabase
+        .from('pelanggan')
+        .select(`
+          *,
+          tipe_pelanggan:id_tipe_pelanggan(nama_tipe, level_member, persentase_diskon)
+        `)
+        .eq('id_user', user?.id)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching profile:", error);
+        toast({
+          variant: "destructive",
+          title: "Gagal Memuat Profil",
+          description: "Terjadi kesalahan saat memuat data profil."
+        });
+      } else {
+        setProfileData(pelanggan);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
   };
 
   const profileMenu = [
@@ -30,7 +71,11 @@ const Profile = () => {
       <div className="max-w-7xl mx-auto py-8">
         <h1 className="text-2xl font-semibold mb-6">Profil Saya</h1>
         
-        {userData.isLoggedIn ? (
+        {isLoading ? (
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nature-600"></div>
+          </div>
+        ) : user ? (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Sidebar */}
             <div className="md:col-span-1">
@@ -38,13 +83,19 @@ const Profile = () => {
                 <div className="flex flex-col items-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 mb-4">
                     <img 
-                      src={userData.image} 
-                      alt={userData.name} 
+                      src={profileData?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData?.nama_lengkap || user.email || '')}&background=0D8ABC&color=fff`} 
+                      alt={profileData?.nama_lengkap || "Profile"} 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h2 className="text-lg font-medium">{userData.name}</h2>
-                  <p className="text-sm text-muted-foreground mb-6">{userData.email}</p>
+                  <h2 className="text-lg font-medium">{profileData?.nama_lengkap || "Pengguna"}</h2>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                  
+                  {profileData?.tipe_pelanggan && (
+                    <div className="mt-2 mb-4 py-1 px-3 bg-nature-100 text-nature-800 rounded-full text-xs font-medium">
+                      {profileData.tipe_pelanggan.nama_tipe} - {profileData.tipe_pelanggan.level_member.toUpperCase()}
+                    </div>
+                  )}
                   
                   <div className="w-full space-y-1">
                     {profileMenu.map((item) => (
@@ -62,7 +113,10 @@ const Profile = () => {
                       </Link>
                     ))}
                     
-                    <button className="flex items-center gap-3 px-3 py-2 rounded-md w-full text-rose-500 hover:bg-rose-50 hover:text-rose-600 mt-4">
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 px-3 py-2 rounded-md w-full text-rose-500 hover:bg-rose-50 hover:text-rose-600 mt-4"
+                    >
                       <LogOut size={18} />
                       <span>Keluar</span>
                     </button>
@@ -82,7 +136,7 @@ const Profile = () => {
                       <label className="block text-sm font-medium mb-2">Nama Lengkap</label>
                       <input 
                         type="text"
-                        defaultValue={userData.name}
+                        defaultValue={profileData?.nama_lengkap || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
                       />
                     </div>
@@ -90,7 +144,16 @@ const Profile = () => {
                       <label className="block text-sm font-medium mb-2">Email</label>
                       <input 
                         type="email"
-                        defaultValue={userData.email}
+                        defaultValue={user.email || ""}
+                        className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                        disabled
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Nomor WhatsApp</label>
+                      <input 
+                        type="tel"
+                        defaultValue={profileData?.nomor_whatsapp || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
                       />
                     </div>
@@ -98,7 +161,7 @@ const Profile = () => {
                       <label className="block text-sm font-medium mb-2">Nomor Telepon</label>
                       <input 
                         type="tel"
-                        defaultValue="+62 812 3456 7890"
+                        defaultValue={profileData?.nomor_telepon || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
                       />
                     </div>
@@ -106,28 +169,27 @@ const Profile = () => {
                       <label className="block text-sm font-medium mb-2">Tanggal Lahir</label>
                       <input 
                         type="date"
-                        defaultValue="1990-01-01"
+                        defaultValue={profileData?.tanggal_lahir || ""}
+                        className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">NIK</label>
+                      <input 
+                        type="text"
+                        defaultValue={profileData?.nik || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
                       />
                     </div>
                   </div>
                   
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Alamat</label>
-                    <textarea 
-                      rows={3}
-                      defaultValue="Jl. Lintas Sumut-Riau, No. 123, Cikampak, Aek Batu, Torgamba, Labuhanbatu Selatan."
-                      className="w-full px-4 py-2 rounded-md border border-input bg-background"
-                    />
-                  </div>
-                  
                   <div className="flex justify-end">
-                    <button 
+                    <Button 
                       type="submit"
                       className="px-4 py-2 bg-nature-600 text-white rounded-md hover:bg-nature-700 transition-colors"
                     >
                       Simpan Perubahan
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -135,7 +197,7 @@ const Profile = () => {
           </div>
         ) : (
           <div className="glass-card p-8 text-center">
-            <div className="center mb-4">
+            <div className="flex justify-center mb-4">
               <User size={64} className="text-muted-foreground" />
             </div>
             <h2 className="text-xl font-medium mb-2">Silakan Masuk</h2>
