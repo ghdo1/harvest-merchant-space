@@ -105,6 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         options: {
           data: {
             nama_lengkap: userData.name,
+            nomor_whatsapp: userData.phone,
           },
         },
       });
@@ -136,7 +137,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           toast({
             variant: "destructive",
             title: "Pendaftaran Gagal",
-            description: "Gagal membuat profil pengguna.",
+            description: "Gagal membuat profil pengguna: " + profileError.message,
           });
           
           return { error: profileError, user: data.user };
@@ -156,33 +157,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Create a new customer profile
   const createCustomerProfile = async (userId: string, userData: any) => {
-    // First get default bronze customer type
-    const { data: customerType, error: typeError } = await supabase
-      .from("tipe_pelanggan")
-      .select("id_tipe_pelanggan")
-      .eq("level_member", "bronze")
-      .limit(1)
-      .single();
+    try {
+      console.log("Creating customer profile for user:", userId);
+      
+      // First try to get default bronze customer type
+      const { data: customerTypes, error: typesError } = await supabase
+        .from("tipe_pelanggan")
+        .select("id_tipe_pelanggan")
+        .eq("level_member", "bronze")
+        .limit(1);
 
-    if (typeError) {
-      console.error("Error fetching default customer type:", typeError);
-      throw new Error("Gagal mendapatkan tipe pelanggan default");
-    }
+      if (typesError) {
+        console.error("Error fetching customer types:", typesError);
+        throw new Error("Gagal mendapatkan tipe pelanggan");
+      }
+      
+      // If no customer type exists, create a default one
+      let typeId = customerTypes && customerTypes.length > 0 
+        ? customerTypes[0].id_tipe_pelanggan 
+        : null;
+      
+      if (!typeId) {
+        console.log("No bronze customer type found, creating default type");
+        const { data: newType, error: createTypeError } = await supabase
+          .from("tipe_pelanggan")
+          .insert({
+            nama_tipe: "Pelanggan Baru",
+            level_member: "bronze",
+            jumlah_minimal: 0,
+            persentase_diskon: 0
+          })
+          .select("id_tipe_pelanggan")
+          .single();
+        
+        if (createTypeError) {
+          console.error("Error creating default customer type:", createTypeError);
+          throw new Error("Gagal membuat tipe pelanggan default");
+        }
+        
+        typeId = newType.id_tipe_pelanggan;
+      }
 
-    // Create new customer profile
-    const { error: profileError } = await supabase
-      .from("pelanggan")
-      .insert({
-        id_user: userId,
-        id_tipe_pelanggan: customerType.id_tipe_pelanggan,
-        nama_lengkap: userData.name,
-        email: userData.email,
-        nomor_whatsapp: userData.phone || null,
-      });
+      // Now create the customer profile
+      const { error: profileError } = await supabase
+        .from("pelanggan")
+        .insert({
+          id_user: userId,
+          id_tipe_pelanggan: typeId,
+          nama_lengkap: userData.name,
+          email: userData.email,
+          nomor_whatsapp: userData.phone || null,
+        });
 
-    if (profileError) {
-      console.error("Error creating customer profile:", profileError);
-      throw new Error("Gagal membuat profil pelanggan");
+      if (profileError) {
+        console.error("Error creating customer profile:", profileError);
+        throw new Error(profileError.message || "Gagal membuat profil pelanggan");
+      }
+      
+      console.log("Successfully created customer profile");
+    } catch (error: any) {
+      console.error("Error in createCustomerProfile:", error);
+      throw error;
     }
   };
 

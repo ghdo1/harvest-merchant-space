@@ -11,6 +11,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Categories from "./pages/Categories";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
@@ -40,6 +41,7 @@ const AppWithProviders = () => {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

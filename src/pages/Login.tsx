@@ -6,7 +6,6 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -47,6 +46,7 @@ const Login = () => {
       password: "",
       rememberMe: false,
     },
+    mode: "onChange", // Enable real-time validation
   });
 
   const onSubmit = async (values: LoginFormValues) => {

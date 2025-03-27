@@ -28,27 +28,48 @@ const Profile = () => {
     try {
       setIsLoading(true);
       
+      // First try to get user data from auth.users
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        throw userError;
+      }
+      
+      // Then fetch customer data
       const { data: pelanggan, error } = await supabase
         .from('pelanggan')
         .select(`
           *,
-          tipe_pelanggan:id_tipe_pelanggan(nama_tipe, level_member, persentase_diskon)
+          tipe_pelanggan(nama_tipe, level_member, persentase_diskon)
         `)
-        .eq('id_user', user?.id)
+        .eq('id_user', userData.user.id)
         .single();
       
       if (error) {
-        console.error("Error fetching profile:", error);
-        toast({
-          variant: "destructive",
-          title: "Gagal Memuat Profil",
-          description: "Terjadi kesalahan saat memuat data profil."
+        // If no customer data found, just use the auth user data
+        console.log("Customer data not found, using basic user data");
+        
+        setProfileData({
+          nama_lengkap: userData.user.user_metadata?.nama_lengkap || "Pengguna",
+          email: userData.user.email,
+          nomor_whatsapp: userData.user.user_metadata?.nomor_whatsapp || "",
+          tipe_pelanggan: {
+            nama_tipe: "Pelanggan Baru",
+            level_member: "bronze",
+            persentase_diskon: 0
+          }
         });
       } else {
         setProfileData(pelanggan);
       }
     } catch (error) {
       console.error("Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Gagal Memuat Profil",
+        description: "Terjadi kesalahan saat memuat data profil."
+      });
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +114,7 @@ const Profile = () => {
                   
                   {profileData?.tipe_pelanggan && (
                     <div className="mt-2 mb-4 py-1 px-3 bg-nature-100 text-nature-800 rounded-full text-xs font-medium">
-                      {profileData.tipe_pelanggan.nama_tipe} - {profileData.tipe_pelanggan.level_member.toUpperCase()}
+                      {profileData.tipe_pelanggan.nama_tipe} - {profileData.tipe_pelanggan.level_member?.toUpperCase() || "BRONZE"}
                     </div>
                   )}
                   
@@ -130,7 +151,7 @@ const Profile = () => {
               <div className="glass-card p-6">
                 <h2 className="text-xl font-medium mb-6">Informasi Profil</h2>
                 
-                <form className="space-y-6">
+                <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium mb-2">Nama Lengkap</label>
@@ -138,6 +159,7 @@ const Profile = () => {
                         type="text"
                         defaultValue={profileData?.nama_lengkap || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                        disabled
                       />
                     </div>
                     <div>
@@ -155,6 +177,7 @@ const Profile = () => {
                         type="tel"
                         defaultValue={profileData?.nomor_whatsapp || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                        disabled
                       />
                     </div>
                     <div>
@@ -163,6 +186,7 @@ const Profile = () => {
                         type="tel"
                         defaultValue={profileData?.nomor_telepon || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                        disabled
                       />
                     </div>
                     <div>
@@ -171,6 +195,7 @@ const Profile = () => {
                         type="date"
                         defaultValue={profileData?.tanggal_lahir || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                        disabled
                       />
                     </div>
                     <div>
@@ -179,19 +204,17 @@ const Profile = () => {
                         type="text"
                         defaultValue={profileData?.nik || ""}
                         className="w-full px-4 py-2 rounded-md border border-input bg-background"
+                        disabled
                       />
                     </div>
                   </div>
                   
                   <div className="flex justify-end">
-                    <Button 
-                      type="submit"
-                      className="px-4 py-2 bg-nature-600 text-white rounded-md hover:bg-nature-700 transition-colors"
-                    >
-                      Simpan Perubahan
-                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Untuk mengubah data profil, silakan hubungi admin.
+                    </p>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </div>

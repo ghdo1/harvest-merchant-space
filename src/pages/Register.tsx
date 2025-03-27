@@ -6,7 +6,6 @@ import { Eye, EyeOff, Lock, Mail, User, Phone } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -19,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { toast } from "@/hooks/use-toast";
 
 const registerSchema = z.object({
   name: z
@@ -72,6 +72,7 @@ const Register = () => {
       confirmPassword: "",
       agreeToTerms: false,
     },
+    mode: "onChange", // This enables real-time validation
   });
 
   const onSubmit = async (values: RegisterFormValues) => {
@@ -84,11 +85,20 @@ const Register = () => {
         phone: values.phone,
       });
       
-      if (!error && user) {
-        // Successfully signed up and in, redirect happens in auth hook
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Pendaftaran Gagal",
+          description: error.message || "Terjadi kesalahan saat mendaftar",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
+      toast({
+        variant: "destructive",
+        title: "Terjadi Kesalahan",
+        description: error.message || "Terjadi kesalahan saat mendaftar",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -267,7 +277,7 @@ const Register = () => {
               <Button
                 type="submit"
                 className="w-full py-2.5 bg-nature-500 hover:bg-nature-600 text-white font-medium rounded-md transition-colors"
-                disabled={isLoading || !form.formState.isValid}
+                disabled={isLoading}
               >
                 {isLoading ? "Memproses..." : "Daftar Sekarang"}
               </Button>
