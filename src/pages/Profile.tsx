@@ -1,12 +1,10 @@
-
 import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { User, Package, Heart, LogOut, Settings, Clock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { getProfile } from "@/utils/mockProfileUtils";
 
 const Profile = () => {
   const { user, signOut } = useAuth();
@@ -28,32 +26,21 @@ const Profile = () => {
     try {
       setIsLoading(true);
       
-      // First try to get user data from auth.users
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        console.error("Error fetching user:", userError);
-        throw userError;
+      if (!user) {
+        throw new Error("No user logged in");
       }
-      
-      // Then fetch customer data
-      const { data: pelanggan, error } = await supabase
-        .from('pelanggan')
-        .select(`
-          *,
-          tipe_pelanggan(nama_tipe, level_member, persentase_diskon)
-        `)
-        .eq('id_user', userData.user.id)
-        .single();
+
+      // Fetch profile data from our mock function
+      const { data: profile, error } = await getProfile(user.id);
       
       if (error) {
         // If no customer data found, just use the auth user data
         console.log("Customer data not found, using basic user data");
         
         setProfileData({
-          nama_lengkap: userData.user.user_metadata?.nama_lengkap || "Pengguna",
-          email: userData.user.email,
-          nomor_whatsapp: userData.user.user_metadata?.nomor_whatsapp || "",
+          nama_lengkap: user.user_metadata?.nama_lengkap || "Pengguna",
+          email: user.email,
+          nomor_whatsapp: user.user_metadata?.nomor_whatsapp || "",
           tipe_pelanggan: {
             nama_tipe: "Pelanggan Baru",
             level_member: "bronze",
@@ -61,9 +48,9 @@ const Profile = () => {
           }
         });
       } else {
-        setProfileData(pelanggan);
+        setProfileData(profile);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
       toast({
         variant: "destructive",
