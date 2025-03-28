@@ -2,11 +2,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext, User, Session } from "@/contexts/AuthContext";
 import { mockUsers, mockProfiles } from "@/data/mockData";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Create a user object similar to what Supabase would return
-      const userObject = {
+      const userObject: User = {
         id: foundUser.id,
         email: foundUser.email,
         user_metadata: foundUser.user_metadata
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       
       // Automatically log in the new user
-      const userObject = {
+      const userObject: User = {
         id: newUser.id,
         email: newUser.email,
         user_metadata: newUser.user_metadata
@@ -175,8 +175,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Create a session object (simplified for the mock)
-  const session = user ? { user } : null;
+  // Create a mock session object
+  const session: Session | null = user ? {
+    user,
+    access_token: "mock-access-token",
+    refresh_token: "mock-refresh-token",
+    expires_in: 3600,
+    token_type: "bearer"
+  } : null;
 
   return (
     <AuthContext.Provider value={{
