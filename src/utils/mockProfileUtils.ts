@@ -1,45 +1,34 @@
 
-import { mockProfiles } from "@/data/mockData";
-import { toast } from "@/hooks/use-toast";
-
-export const getProfile = async (userId: string) => {
-  try {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Find the profile for the given user id
-    const profile = mockProfiles.find(profile => profile.id_user === userId);
-    
-    if (!profile) {
-      return { data: null, error: new Error("Profile not found") };
-    }
-    
-    return { data: profile, error: null };
-  } catch (error: any) {
-    console.error("Error in getProfile:", error);
-    toast({
-      variant: "destructive",
-      title: "Error Loading Profile",
-      description: error.message || "An unknown error occurred",
-    });
-    return { data: null, error };
-  }
+// Mock implementation of customer profile utilities for frontend prototype
+export const createCustomerProfile = async (userId: string, userData: any) => {
+  console.log('Creating mock customer profile for user:', userId, userData);
+  
+  // Just simulate success - in a real app this would interact with the database
+  return { error: null };
 };
 
-export const createCustomerProfile = async (userId: string, userData: any) => {
-  try {
-    // In a real app, this would create a profile in the database
-    // Here we just simulate success
-    console.log("Creating customer profile for user:", userId);
-    
-    return { error: null };
-  } catch (error: any) {
-    console.error("Error in createCustomerProfile:", error);
-    toast({
-      variant: "destructive",
-      title: "Error Creating Profile",
-      description: error.message || "An unknown error occurred",
-    });
-    return { error };
-  }
+export const getCustomerProfile = async (userId: string) => {
+  console.log('Fetching mock customer profile for user:', userId);
+  
+  // Return mock profile data
+  return { 
+    data: {
+      id: userId,
+      nama_lengkap: userData?.name || "Demo User",
+      email: userData?.email || "user@example.com",
+      nomor_whatsapp: userData?.phone || "08123456789",
+      tipe_pelanggan: {
+        nama_tipe: "Bronze",
+        persentase_diskon: 5
+      }
+    }, 
+    error: null 
+  };
+};
+
+// Mock user data for convenience
+const userData = {
+  name: "Demo User",
+  email: "user@example.com",
+  phone: "08123456789"
 };

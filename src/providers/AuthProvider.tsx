@@ -3,9 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { User, Session } from "@supabase/supabase-js";
-import { AuthContext } from "@/contexts/AuthContext";
-import { createCustomerProfile } from "@/utils/customerProfileUtils";
+import { AuthContext, User, Session } from "@/contexts/AuthContext";
+import { createCustomerProfile } from "@/utils/mockProfileUtils";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -18,8 +17,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+        if (session) {
+          // Convert from Supabase User to our custom User type
+          const customUser: User = {
+            id: session.user.id,
+            email: session.user.email || null,
+            user_metadata: {
+              nama_lengkap: session.user.user_metadata?.nama_lengkap,
+              nomor_whatsapp: session.user.user_metadata?.nomor_whatsapp,
+            }
+          };
+          
+          // Create our custom Session
+          const customSession: Session = {
+            user: customUser,
+            access_token: session.access_token,
+            refresh_token: session.refresh_token,
+            expires_in: session.expires_in,
+            token_type: session.token_type
+          };
+          
+          setUser(customUser);
+          setSession(customSession);
+        } else {
+          setUser(null);
+          setSession(null);
+        }
         
         if (event === 'SIGNED_IN') {
           // Only update the nav after signing in, allow other events to happen silently
@@ -38,8 +61,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      if (session) {
+        // Convert from Supabase User to our custom User type
+        const customUser: User = {
+          id: session.user.id,
+          email: session.user.email || null,
+          user_metadata: {
+            nama_lengkap: session.user.user_metadata?.nama_lengkap,
+            nomor_whatsapp: session.user.user_metadata?.nomor_whatsapp,
+          }
+        };
+        
+        // Create our custom Session
+        const customSession: Session = {
+          user: customUser,
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_in: session.expires_in,
+          token_type: session.token_type
+        };
+        
+        setUser(customUser);
+        setSession(customSession);
+      }
       setIsLoading(false);
     });
 
@@ -107,7 +151,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const { error: profileError } = await createCustomerProfile(data.user.id, userData);
           
           if (profileError) {
-            return { error: profileError, user: data.user };
+            return { error: profileError, user: convertToCustomUser(data.user) };
           }
           
           toast({
@@ -126,11 +170,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "Gagal membuat profil pengguna: " + profileError.message,
           });
           
-          return { error: profileError, user: data.user };
+          return { error: profileError, user: convertToCustomUser(data.user) };
         }
       }
 
-      return { error: null, user: data.user };
+      return { 
+        error: null, 
+        user: data.user ? convertToCustomUser(data.user) : null 
+      };
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -139,6 +186,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       return { error, user: null };
     }
+  };
+
+  // Helper function to convert Supabase User to our custom User type
+  const convertToCustomUser = (supabaseUser: any): User => {
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email || null,
+      user_metadata: {
+        nama_lengkap: supabaseUser.user_metadata?.nama_lengkap,
+        nomor_whatsapp: supabaseUser.user_metadata?.nomor_whatsapp,
+      }
+    };
   };
 
   // Sign out
