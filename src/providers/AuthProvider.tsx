@@ -146,32 +146,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (data.user) {
-        try {
-          // Create customer profile with default "bronze" type
-          const { error: profileError } = await createCustomerProfile(data.user.id, userData);
-          
-          if (profileError) {
-            return { error: profileError, user: convertToCustomUser(data.user) };
-          }
-          
-          toast({
-            title: "Pendaftaran Berhasil",
-            description: "Akun Anda telah dibuat, silakan masuk.",
-          });
-          
-          // Automatically log in and redirect
-          navigate("/", { replace: true });
-        } catch (profileError: any) {
-          console.error("Error creating profile:", profileError);
-          
-          toast({
-            variant: "destructive",
-            title: "Pendaftaran Gagal",
-            description: "Gagal membuat profil pengguna: " + profileError.message,
-          });
-          
-          return { error: profileError, user: convertToCustomUser(data.user) };
-        }
+        // The database trigger will automatically create the profile
+        toast({
+          title: "Pendaftaran Berhasil",
+          description: "Akun Anda telah dibuat, silakan masuk.",
+        });
+        
+        // Redirect to login page
+        navigate("/login", { replace: true });
+        
+        return { error: null, user: convertToCustomUser(data.user) };
       }
 
       return { 

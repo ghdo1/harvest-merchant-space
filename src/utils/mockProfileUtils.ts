@@ -1,53 +1,71 @@
 
-// Mock implementation of customer profile utilities for frontend prototype
+// This file now connects to the real Supabase database
+import { supabase } from "@/integrations/supabase/client";
+
+// Create customer profile with default "bronze" type
 export const createCustomerProfile = async (userId: string, userData: any) => {
-  console.log('Creating mock customer profile for user:', userId, userData);
+  console.log('Creating customer profile for user:', userId, userData);
   
-  // Just simulate success - in a real app this would interact with the database
-  return { error: null };
+  try {
+    // User profile is automatically created via our database trigger
+    // We don't need to do anything extra here anymore
+    return { error: null };
+  } catch (error) {
+    console.error('Error creating customer profile:', error);
+    return { error };
+  }
 };
 
+// Get customer profile from the database
 export const getCustomerProfile = async (userId: string) => {
-  console.log('Fetching mock customer profile for user:', userId);
+  console.log('Fetching customer profile for user:', userId);
   
-  // Return mock profile data
-  return { 
-    data: {
-      id: userId,
-      nama_lengkap: userData?.name || "Demo User",
-      email: userData?.email || "user@example.com",
-      nomor_whatsapp: userData?.phone || "08123456789",
-      tipe_pelanggan: {
-        nama_tipe: "Bronze",
-        persentase_diskon: 5
-      }
-    }, 
-    error: null 
-  };
-};
-
-// This function matches what Profile.tsx is importing
-export const getProfile = async (userId: string) => {
-  console.log('Fetching mock profile for user:', userId);
-  
-  // Return the same mock data as getCustomerProfile
-  return { 
-    data: {
-      id: userId,
-      nama_lengkap: userData?.name || "Demo User",
-      email: userData?.email || "user@example.com",
-      nomor_whatsapp: userData?.phone || "08123456789",
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
+        id, 
+        nama_lengkap, 
+        email, 
+        nomor_whatsapp,
+        user_roles (
+          role
+        )
+      `)
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching customer profile:', error);
+      return { data: null, error };
+    }
+    
+    // Format to match the expected structure
+    const formattedData = {
+      id: data.id,
+      nama_lengkap: data.nama_lengkap,
+      email: data.email,
+      nomor_whatsapp: data.nomor_whatsapp,
       tipe_pelanggan: {
         nama_tipe: "Bronze",
         level_member: "bronze",
         persentase_diskon: 5
       }
-    }, 
-    error: null 
-  };
+    };
+
+    return { data: formattedData, error: null };
+  } catch (error) {
+    console.error('Error fetching customer profile:', error);
+    return { data: null, error };
+  }
 };
 
-// Mock user data for convenience
+// This function matches what Profile.tsx is importing
+export const getProfile = async (userId: string) => {
+  return getCustomerProfile(userId);
+};
+
+// Fallback mock data for development
 const userData = {
   name: "Demo User",
   email: "user@example.com",
