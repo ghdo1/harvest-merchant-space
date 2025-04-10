@@ -174,7 +174,9 @@ const AdminDashboard = () => {
         id: user.id,
         nama_lengkap: user.nama_lengkap,
         email: user.email,
-        role: user.user_roles?.length > 0 ? user.user_roles[0].role : 'customer'
+        role: user.user_roles && user.user_roles.length > 0 
+          ? user.user_roles[0].role 
+          : 'customer'
       }));
 
       setUsers(formattedUsers);
