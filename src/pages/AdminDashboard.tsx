@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,7 +30,18 @@ type Category = {
   description: string | null;
 };
 
+type UserRole = {
+  role: 'admin' | 'customer' | 'staff';
+};
+
 type User = {
+  id: string;
+  nama_lengkap: string;
+  email: string;
+  user_roles: UserRole[] | null;
+};
+
+type FormattedUser = {
   id: string;
   nama_lengkap: string;
   email: string;
@@ -43,7 +53,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<FormattedUser[]>([]);
   const [loading, setLoading] = useState({
     products: false,
     categories: false,
@@ -192,7 +202,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // If admin access not verified yet, show loading
   if (!adminAccess) {
     return (
       <MainLayout>
@@ -221,7 +230,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="pb-2">
@@ -264,7 +272,6 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Main Content */}
         <Tabs defaultValue="products" className="w-full">
           <TabsList>
             <TabsTrigger value="products">Produk</TabsTrigger>
