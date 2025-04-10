@@ -40,6 +40,10 @@ export const getCustomerProfile = async (userId: string) => {
       return { data: null, error };
     }
     
+    if (!data) {
+      return { data: null, error: new Error('Profile not found') };
+    }
+    
     // Format to match the expected structure
     const formattedData = {
       id: data.id,

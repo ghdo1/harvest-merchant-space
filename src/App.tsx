@@ -20,6 +20,8 @@ import Wishlist from "./pages/Wishlist";
 import Services from "./pages/Services";
 import Blog from "./pages/Blog";
 import Tracking from "./pages/Tracking";
+import AdminDashboard from "./pages/AdminDashboard";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,14 @@ const AppWithProviders = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route 
+            path="/admin" 
+            element={
+              <RequireAuth>
+                <AdminDashboard />
+              </RequireAuth>
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

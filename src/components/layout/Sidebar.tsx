@@ -1,7 +1,10 @@
 
-import { Home, ShoppingBag, LayoutGrid, Tag, User, Heart, ShoppingCart, Clock, Menu, X, BookOpenText, Truck } from "lucide-react";
+import { Home, ShoppingBag, LayoutGrid, Tag, User, Heart, ShoppingCart, Clock, Menu, X, BookOpenText, Truck, LayoutDashboard } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SidebarProps {
   open: boolean;
@@ -10,6 +13,30 @@ interface SidebarProps {
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation();
+  const { user } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    // Check if user is admin
+    const checkAdminRole = async () => {
+      if (!user) return;
+      
+      try {
+        const { data } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+          
+        setIsAdmin(!!data);
+      } catch (error) {
+        console.error('Error checking admin role:', error);
+      }
+    };
+    
+    checkAdminRole();
+  }, [user]);
   
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -30,6 +57,11 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     { name: "Wishlist", path: "/wishlist", icon: Heart },
     { name: "Keranjang", path: "/cart", icon: ShoppingCart },
     { name: "Riwayat", path: "/history", icon: Clock },
+  ];
+
+  // Admin menu items
+  const adminItems = [
+    { name: "Dashboard Admin", path: "/admin", icon: LayoutDashboard },
   ];
 
   return (
@@ -95,6 +127,29 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 <span>{item.name}</span>
               </Link>
             ))}
+
+            {/* Show admin section only for admin users */}
+            {isAdmin && (
+              <>
+                <h3 className="text-xs font-medium text-muted-foreground px-2 my-2 pt-4">ADMIN</h3>
+                {adminItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={onClose}
+                    className={cn(
+                      "flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-colors",
+                      isActive(item.path) 
+                        ? "bg-blue-100 text-blue-700 font-medium" 
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    <item.icon size={18} />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </>
+            )}
           </nav>
           
           <div className="px-4 py-6">
