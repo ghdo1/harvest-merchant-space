@@ -181,14 +181,21 @@ const AdminDashboard = () => {
 
       if (error) throw error;
 
-      const formattedUsers = data.map(user => ({
-        id: user.id,
-        nama_lengkap: user.nama_lengkap,
-        email: user.email,
-        role: user.user_roles && user.user_roles.length > 0 
-          ? user.user_roles[0].role 
-          : 'customer'
-      }));
+      const formattedUsers = data.map(user => {
+        // Fix the type issue by correctly handling the user_roles data
+        let role = 'customer';
+        if (user.user_roles && Array.isArray(user.user_roles) && user.user_roles.length > 0) {
+          // TypeScript now knows this is an array and can safely access the first item's role
+          role = user.user_roles[0]?.role || 'customer';
+        }
+
+        return {
+          id: user.id,
+          nama_lengkap: user.nama_lengkap,
+          email: user.email,
+          role: role
+        };
+      });
 
       setUsers(formattedUsers);
     } catch (error) {
