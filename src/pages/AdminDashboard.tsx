@@ -1,4 +1,5 @@
 
+import React, { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
@@ -23,7 +24,7 @@ const AdminDashboard = () => {
   
   // Only fetch data when the component mounts and admin access is granted
   // This will prevent infinite loops from repeated data fetching
-  React.useEffect(() => {
+  useEffect(() => {
     if (adminAccess && products.length === 0 && categories.length === 0 && users.length === 0) {
       fetchData();
     }
