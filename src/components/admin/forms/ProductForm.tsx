@@ -64,7 +64,7 @@ export function ProductForm({ isOpen, onClose, productToEdit, onSuccess, categor
             name: data.name,
             price: data.price,
             stock: data.stock,
-            category_id: data.category_id || null,
+            category_id: data.category_id === "none" ? null : data.category_id,
             description: data.description,
             slug,
             updated_at: new Date().toISOString(),
@@ -83,7 +83,7 @@ export function ProductForm({ isOpen, onClose, productToEdit, onSuccess, categor
             name: data.name,
             price: data.price,
             stock: data.stock,
-            category_id: data.category_id || null,
+            category_id: data.category_id === "none" ? null : data.category_id,
             description: data.description,
             slug,
           });
@@ -177,7 +177,7 @@ export function ProductForm({ isOpen, onClose, productToEdit, onSuccess, categor
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Tidak ada kategori</SelectItem>
+                      <SelectItem value="none">Tidak ada kategori</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
