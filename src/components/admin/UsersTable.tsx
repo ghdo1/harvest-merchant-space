@@ -24,6 +24,7 @@ import {
 import { useEffect, useState as useReactState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { DeleteConfirmationDialog } from './dialogs/DeleteConfirmationDialog';
 
 type FormattedUser = {
   id: string;
@@ -42,7 +43,7 @@ export const UsersTable = ({ users, loading, onRefresh }: UsersTableProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<FormattedUser | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState("customer"); // Default to customer role
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filteredUsers = users.filter(user => 
@@ -52,7 +53,8 @@ export const UsersTable = ({ users, loading, onRefresh }: UsersTableProps) => {
 
   useEffect(() => {
     if (selectedUser) {
-      setSelectedRole(selectedUser.role);
+      // Ensure selectedRole is never empty
+      setSelectedRole(selectedUser.role || "customer");
     }
   }, [selectedUser]);
 
