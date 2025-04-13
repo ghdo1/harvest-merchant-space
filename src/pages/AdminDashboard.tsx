@@ -8,7 +8,7 @@ import { AdminDashboardContent } from '@/components/admin/AdminDashboardContent'
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const { adminAccess, isCheckingAccess } = useAdminAccess(user);
+  const { adminAccess, isCheckingAccess } = useAdminAccess(user?.id ? user : null);
   const { 
     products, 
     categories, 

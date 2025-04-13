@@ -1,30 +1,15 @@
 
 import { useState } from 'react';
-import { PlusCircle, Edit, Trash2, AlertTriangle, Search } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { 
-  Table, TableHeader, TableRow, TableHead, TableBody, TableCell 
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Product, Category } from '@/hooks/useAdminData';
 import { ProductForm } from './forms/ProductForm';
 import { DeleteConfirmationDialog } from './dialogs/DeleteConfirmationDialog';
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  category_id: string | null;
-  category_name?: string;
-};
-
-type Category = {
-  id: string;
-  name: string;
-};
+import { ProductSearchBar } from './products/ProductSearchBar';
+import { ProductsList } from './products/ProductsList';
 
 interface ProductsTableProps {
   products: Product[];
@@ -39,10 +24,6 @@ export const ProductsTable = ({ products, loading, categories, onRefresh }: Prod
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>(undefined);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const handleAddClick = () => {
     setSelectedProduct(undefined);
@@ -103,67 +84,19 @@ export const ProductsTable = ({ products, loading, categories, onRefresh }: Prod
         </CardHeader>
         <CardContent>
           <div className="mb-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Cari produk..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+            <ProductSearchBar 
+              searchQuery={searchQuery} 
+              onSearchChange={setSearchQuery} 
+            />
           </div>
           
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nama Produk</TableHead>
-                  <TableHead>Kategori</TableHead>
-                  <TableHead className="text-right">Harga</TableHead>
-                  <TableHead className="text-center">Stok</TableHead>
-                  <TableHead className="text-right">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-4">
-                      {loading ? 'Memuat data...' : searchQuery ? 'Tidak ada produk yang ditemukan' : 'Belum ada produk'}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredProducts.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>{product.category_name}</TableCell>
-                      <TableCell className="text-right">Rp {product.price.toLocaleString()}</TableCell>
-                      <TableCell className="text-center">
-                        {product.stock > 0 ? (
-                          product.stock
-                        ) : (
-                          <span className="text-destructive flex items-center justify-center">
-                            <AlertTriangle className="h-4 w-4 mr-1" />
-                            Habis
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="outline" size="icon" onClick={() => handleEditClick(product)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="destructive" size="icon" onClick={() => handleDeleteClick(product)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <ProductsList 
+            products={products}
+            loading={loading}
+            searchQuery={searchQuery}
+            onEditClick={handleEditClick}
+            onDeleteClick={handleDeleteClick}
+          />
         </CardContent>
       </Card>
 
