@@ -8,7 +8,8 @@ import { AdminDashboardContent } from '@/components/admin/AdminDashboardContent'
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const { adminAccess, isCheckingAccess } = useAdminAccess(user?.id ? user : null);
+  // Remove the explicit type cast to fix the type mismatch
+  const { adminAccess, isCheckingAccess } = useAdminAccess(user || null);
   const { 
     products, 
     categories, 
@@ -20,10 +21,13 @@ const AdminDashboard = () => {
     fetchUsers
   } = useAdminData();
   
-  // Fetch data when admin access is granted
-  if (adminAccess && products.length === 0 && categories.length === 0 && users.length === 0) {
-    fetchData();
-  }
+  // Only fetch data when the component mounts and admin access is granted
+  // This will prevent infinite loops from repeated data fetching
+  React.useEffect(() => {
+    if (adminAccess && products.length === 0 && categories.length === 0 && users.length === 0) {
+      fetchData();
+    }
+  }, [adminAccess, products.length, categories.length, users.length, fetchData]);
 
   return (
     <MainLayout>

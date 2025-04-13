@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 
-export const useAdminAccess = (user: User | null) => {
+// Accept either Supabase User type or our custom User type
+export const useAdminAccess = (user: User | { id: string } | null) => {
   const navigate = useNavigate();
   const [adminAccess, setAdminAccess] = useState(false);
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
