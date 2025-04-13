@@ -254,15 +254,28 @@ const AdminDashboard = () => {
           </TabsList>
           
           <TabsContent value="products" className="mt-4 space-y-4">
-            <ProductsTable products={products} loading={loading.products} />
+            <ProductsTable 
+              products={products} 
+              loading={loading.products} 
+              categories={categories} 
+              onRefresh={fetchProducts}
+            />
           </TabsContent>
 
           <TabsContent value="categories" className="mt-4 space-y-4">
-            <CategoriesTable categories={categories} loading={loading.categories} />
+            <CategoriesTable 
+              categories={categories} 
+              loading={loading.categories} 
+              onRefresh={fetchCategories}
+            />
           </TabsContent>
 
           <TabsContent value="users" className="mt-4 space-y-4">
-            <UsersTable users={users} loading={loading.users} />
+            <UsersTable 
+              users={users} 
+              loading={loading.users} 
+              onRefresh={fetchUsers}
+            />
           </TabsContent>
         </Tabs>
       </div>
